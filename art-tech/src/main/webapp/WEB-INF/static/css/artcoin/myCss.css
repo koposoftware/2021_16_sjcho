@@ -1,0 +1,38 @@
+.align-right {
+	text-align: right;
+}
+.table-main-title {
+	font-weight: bold;
+	font-size: 17px;
+}
+
+.view-all {
+	font-size: 13px;
+}
+
+.a-style {
+	text-decoration: none;
+	color: black;
+}
+
+.nav-item {
+	padding-left: 20px;
+}
+
+.blockDetail-title-div {
+	padding-top: 50px;
+}
+.blockDetail-title-div p {
+	font-size: 25px;
+	font-weight: bold;
+}
+
+/*address*/
+.address-title-container {
+	padding-top: 50px;
+	padding-left: 0px;
+}
+.address-title-container p {
+	font-weight: bold;
+	font-size: 15px;
+}

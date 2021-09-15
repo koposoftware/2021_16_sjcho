@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="kr.ac.arttech.openbanking">
+	<select id="checkOpenBankingAgree" parameterType="String" resultType="String">
+		select privacy_agree_yn from sj_member where id = #{memberId}
+	</select>
+	
+	<update id="updateServiceAgreeState" parameterType="member">
+		update sj_member set privacy_agree_yn = 'Y', token = #{token} where id = #{id}
+	</update>
+	
+	<select id="selectMemberNameJumin" resultType="member" parameterType="String">
+		select jumin_no as juminNo, name from sj_member where id = #{memberId}
+	</select>
+	
+	<select id="selectToken" resultType="String" parameterType="String">
+		select token from sj_member where id = #{memberId}
+	</select>
+	
+	<resultMap type="autoAccountInfo" id="autoAccountInfoMap">
+		<result column="member_id" property="memberId"/>
+		<result column="bank_code" property="bankCode"/>
+		<result column="bank_name" property="bankName"/>
+		<result column="account_number" property="accountNumber"/>
+		<result column="auto_amt" property="autoAmt"/>
+		<result column="reg_date" property="regDate"/>
+	</resultMap>
+	
+	<!-- 자동예치금 설정한 계좌 가져오기 (한명) -->
+	<select id="selectAutoAccountList" resultMap="autoAccountInfoMap" parameterType="String">
+		select id, member_id, bank_code, account_number, to_char(auto_amt,'999,999,999,999,999,999') as auto_amt, bank_name,
+		to_char(reg_date, 'yyyy-mm-dd') as regDate from sj_auto_tran_account
+		where member_id = #{memberId} 
+		order by reg_date desc
+	</select>
+	
+	<resultMap type="accountInfo" id="accountInfoMap">
+		<result column="account_number" property="accountNumber"/>
+		<result column="bank_code" property="bankCode"/>
+		<result column="bank_name" property="bankName"/>
+	</resultMap>
+	
+	<select id="selectNonAutoAccountList" parameterType="hashmap" resultMap="accountInfoMap">
+		select a.*, (select bank_name from sj_bank where bank_code = a.bank_code) as bank_name 
+		from sj_account_info a where account_number not in 
+		(select account_number from sj_auto_tran_account where member_id = #{memberId})
+		and jumin_no = #{juminNo}
+	</select>
+	
+	<select id="selectJuminNo" resultType="String" parameterType="String">
+		select jumin_no from sj_member where id = #{memberId}
+	</select>
+	
+	<insert id="insertAutoAccountInfo" parameterType="java.util.HashMap">
+		
+		<foreach collection="paramMap" item="map" separator=" " open="INSERT ALL" close="SELECT * FROM DUAL">	
+			into sj_auto_tran_account(
+				id, member_id, bank_code, bank_name, account_number, auto_amt) 
+			values(
+				#{map.id}, 
+				#{map.memberId} , 
+				#{map.bankCode} , 
+				#{map.bankName} , 
+				#{map.accountNumber} , 
+				#{map.autoAmt}  
+			)
+		</foreach>
+	</insert>	
+	
+	<select id="selectSeqNo" resultType="int">
+		select sj_seq_auto_tran_account.nextval as id from dual
+	</select>
+	
+	<delete id="deleteAutoAccountInfo" parameterType="java.util.HashMap">
+		delete from sj_auto_tran_account where account_number in
+		<foreach collection="paramMap" item="map" separator="," open="(" close=")">
+			#{map}
+		</foreach>
+	</delete>
+	
+	<!-- 자동이체 할 계좌 list 가져오기 -->
+	<select id="selectAutoTranAccountInfoList" resultMap="autoAccountInfoMap" parameterType="String">
+		select a.* , m.token from sj_auto_tran_account a, sj_member m 
+		where a.member_id = m.id
+	</select>
+	
+	<resultMap type="manageAccountInfo" id="manageAccountInfoMap">
+		<result column="jumin_no" property="juminNo"/>
+		<result column="account_number" property="accountNumber"/>
+		<result column="bank_code" property="bankCode"/>
+		<result column="reg_date" property="regDate"/>
+	</resultMap>
+	
+	<!-- 회사 계좌 정보 -->
+	<select id="selectManageAccountInfo" resultMap="manageAccountInfoMap">
+		select * from sj_manage_account_info
+	</select>
+	
+	<!-- 자동이체 신청한 계좌정보 + 유저정보(문자 보내기 위해서) -->
+	<select id="selectAutoTranInfoSMS" resultType="autoTranInfoSMS">
+		select m.id, m.name, m.phone, a.bank_name as bankName, 
+		to_char(a.auto_amt,'999,999,999,999,999,999') as autoAmt, 
+		a.account_number as accountNumber 
+		from sj_auto_tran_account a, sj_member m
+		where a.member_id = m.id
+		order by m.id
+	</select>
+</mapper>

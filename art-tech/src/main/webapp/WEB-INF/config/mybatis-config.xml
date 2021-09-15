@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<settings>
+        <setting name="cacheEnabled" value="false" />
+        <setting name="jdbcTypeForNull" value="NULL" />
+        <setting name="localCacheScope" value="STATEMENT"/>
+    </settings>
+	<typeAliases>
+		<typeAlias type="kr.ac.arttech.member.vo.MemberVO" alias="member"/>
+		<typeAlias type="kr.ac.arttech.member.vo.MyHistoryVO" alias="myHistory"/>
+		<typeAlias type="kr.ac.arttech.member.vo.MyGalleryVO" alias="myGallery"/>
+		
+		<typeAlias type="kr.ac.arttech.openbanking.vo.AutoTranAccountVO" alias="autoAccountInfo"/>
+		<typeAlias type="kr.ac.arttech.openbanking.vo.AccountInfoVO" alias="accountInfo"/>
+		<typeAlias type="kr.ac.arttech.openbanking.vo.ManageAccountInfoVO" alias="manageAccountInfo"/>
+		<typeAlias type="kr.ac.arttech.openbanking.vo.AutoTranInfoSMSVO" alias="autoTranInfoSMS"/>
+		
+		<typeAlias type="kr.ac.arttech.cobuying.vo.ArtworkInfoVO" alias="artworkInfo"/>
+		<typeAlias type="kr.ac.arttech.cobuying.vo.ArtworkInfoImgVO" alias="artworkInfoImg"/>
+		<typeAlias type="kr.ac.arttech.cobuying.vo.PurchaseInfoVO" alias="purchaseInfo"/>
+		
+		<typeAlias type="kr.ac.arttech.notice.vo.NoticeVO" alias="notice"/>
+		
+		<typeAlias type="kr.ac.arttech.util.PagingVO" alias="paging"/>
+	</typeAliases>
+	<mappers>
+		<mapper resource="mapper/member.xml"/>
+		<mapper resource="mapper/openbanking.xml"/>
+		<mapper resource="mapper/cobuying.xml"/>
+		<mapper resource="mapper/notice.xml"/>
+	</mappers>
+</configuration>

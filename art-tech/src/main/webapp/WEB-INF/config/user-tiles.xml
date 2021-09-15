@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+	<definition name="member/signup" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/user/signup.jsp" />
+	</definition>
+	<definition name="member/signin" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/user/signin.jsp" />
+	</definition>
+	
+	<definition name="openBanking/myAccountList" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/openBanking/myAccountList.jsp" />
+	</definition>
+	<definition name="openBanking/myAccountDetail" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/openBanking/myAccountDetail.jsp" />
+	</definition>
+	<definition name="openBanking/termsOfService" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/openBanking/termsOfService.jsp" />
+	</definition>
+	
+	<definition name="deposit/myDeposit" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/deposit/myDeposit.jsp" />
+	</definition>
+	<definition name="deposit/transferDeposit" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/deposit/transferDeposit.jsp" />
+	</definition>
+	<definition name="deposit/autoTranDeposit" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/deposit/autoTranDeposit.jsp" />
+	</definition>
+	
+	<definition name="co-buying/goods" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/co-buying/goods.jsp" />
+	</definition>
+	<definition name="co-buying/goodsDetail" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/co-buying/goodsDetail.jsp" />
+	</definition>
+	<definition name="co-buying/ownership" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/co-buying/ownership.jsp" />
+	</definition>
+	<definition name="co-buying/ownershipDetail" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/co-buying/ownershipDetail.jsp" />
+	</definition>
+	<definition name="co-buying/disposal" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/co-buying/disposal.jsp" />
+	</definition>
+	<definition name="co-buying/purchase" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/co-buying/purchase.jsp" />
+	</definition>
+	
+	<definition name="myPage/myInfo" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/myPage/myInfo.jsp" />
+	</definition>
+	<definition name="myPage/myHistory" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/myPage/myHistory.jsp" />
+	</definition>
+	<definition name="myPage/myGallery" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/myPage/myGallery.jsp" />
+	</definition>
+	
+	<definition name="notice/list" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/notice/list.jsp" />
+	</definition>
+	<definition name="notice/detail" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/notice/detail.jsp" />
+	</definition>
+	
+	<definition name="artscan/blocks" extends="artscanTemplate">
+		<put-attribute name="artscanContent" value="/WEB-INF/pages/artcoin/blocks.jsp" />
+	</definition>
+	<definition name="artscan/blockDetail" extends="artscanTemplate">
+		<put-attribute name="artscanContent" value="/WEB-INF/pages/artcoin/blockDetail.jsp" />
+	</definition>
+	<definition name="artscan/txns" extends="artscanTemplate">
+		<put-attribute name="artscanContent" value="/WEB-INF/pages/artcoin/txns.jsp" />
+	</definition>
+	<definition name="artscan/txnDetail" extends="artscanTemplate">
+		<put-attribute name="artscanContent" value="/WEB-INF/pages/artcoin/txnDetail.jsp" />
+	</definition>
+	<definition name="artscan/address" extends="artscanTemplate">
+		<put-attribute name="artscanContent" value="/WEB-INF/pages/artcoin/address.jsp" />
+	</definition>
+	
+	
+</tiles-definitions>

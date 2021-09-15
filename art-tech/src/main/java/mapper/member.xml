@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="kr.ac.arttech.member">
+	<sql id="countMember">
+		select count(*) from sj_member
+	</sql>
+
+	<select id="checkUserId" parameterType="String" resultType="int">
+		<include refid="countMember"/>
+		where user_id = #{userId}
+	</select>
+	<select id="checkUserIdPassword" parameterType="member" resultType="int">
+		<include refid="countMember"/>
+		where user_id = #{userId} and password = #{password}
+	</select>
+	
+	<resultMap type="member" id="memberMap">
+		<result column="user_id" property="userId"/>
+		<result column="easy_password" property="easyPassword"/>
+		<result column="jumin_no" property="juminNo"/>
+		<result column="addr1_load" property="addr1Load"/>
+		<result column="addr1_jibun" property="addr1Jibun"/>
+		<result column="kakao_id" property="kakaoId"/>
+		<result column="reg_date" property="regDate"/>
+		<result column="withdrawal_date" property="withdrawalDate"/>
+		<result column="receive_kakao_yn" property="receiveKakaoYn"/>
+		<result column="mem_denied_yn" property="memDeniedYn"/>
+		<result column="privacy_agree_yn" property="privacyAgreeYn"/>
+		<result column="fintech_use_no" property="fintechUseNo"/>
+		<result column="private_Key" property="privateKey"/>
+		<result column="public_key" property="publicKey"/>
+	</resultMap>
+	
+	<insert id="insertMember" parameterType="member">
+		insert into sj_member(id, user_id, password, name, phone, 
+		email, easy_password, birth, jumin_no, zipcode, addr1_load,
+		addr1_jibun, addr2, gender, receive_kakao_yn) 
+		values('member'||seq_sj_member.nextval, #{userId}, #{password}, #{name}, #{phone},
+		#{email}, #{easyPassword}, #{birth}, #{juminNo}, #{zipcode}, #{addr1Load}, 
+		#{addr1Jibun}, #{addr2}, #{gender}, #{receiveKakaoYn}
+		 )
+	</insert>
+	
+	<select id="selectMemberInfo" parameterType="String" resultMap="memberMap">
+		select id, user_id , name, phone, email, birth, zipcode, 
+		addr1_load , addr1_jibun , addr2, gender, kakao_id , 
+		reg_date, withdrawal_date , receive_kakao_yn, public_key,
+		mem_denied_yn as memDeniedYn, privacy_agree_yn as privacyAgreeYn, 
+		fintech_use_no  as fintechUseNo
+		from sj_member where id = #{id}
+	</select>
+	
+	<select id="selectMemberId" parameterType="String" resultType="String">
+		select id from sj_member where user_id = #{userId}
+	</select>
+	
+	
+	<!-- 간편 비밀번호 가져오기 -->
+	<select id="selectEasyPassword" resultType="String">
+		select easy_password from sj_member where id = #{id}
+	</select>
+	
+	<!-- public key, private key 생성 -->
+	<update id="updateWalletInfo" parameterType="hashmap">
+		update sj_member set private_key = #{privateKey} , public_key = #{publicKey} where id = #{id}
+	</update>
+	
+	<!-- 나의 조각 산 내역 -->
+	<!-- myHistory -->
+	<sql id="selectMyHistoryListSql">
+		select p.id, p.artwork_info_id, p.piece_no, to_char(p.reg_date,'yyyy-mm-dd') as regDate,
+		p.type, p.piece_amt, a.title, w.writer_name, a.state,
+		to_char(p.vat,'999,999,999,999,999,999') as vat , 
+		to_char(p.platform_usage_fee,'999,999,999,999,999,999') as platform_usage_fee, 
+		to_char((piece_no * piece_amt) + nvl(platform_usage_fee, 0) + nvl(vat,0),'999,999,999,999,999,999') as totalPrice ,
+		case 
+		    when a.state = '0' then '모집 예정'
+		    when a.state = '1' then '모집 중'
+		    when a.state = '2' then '모집 완료'
+		    when a.state = '3' then '매각 투표'
+		    when a.state = '4' then '투표 종료'
+		    when a.state = '5' then '매각 중'
+		    when a.state = '6' then '수익 분배'
+		    when a.state = '7' then '매각 완료'
+		end as state_name
+		from sj_purchase_info p, sj_artwork_info a, sj_writer_info w
+		where p.artwork_info_id = a.id
+		and a.writer_id = w.id
+	</sql>
+	
+	<resultMap type="myHistory" id="myHistoryMap">
+		<result column="artwork_info_id" property="artworkInfoId"/>
+		<result column="piece_no" property="pieceNo"/>
+		<result column="piece_amt" property="pieceAmt"/>
+		<result column="state_name" property="stateName"/>
+		<result column="writer_name" property="writerName"/>
+		<result column="platform_usage_fee" property="platformUsageFee"/>
+	</resultMap>
+	
+	<!-- 거래내역(전체)myHistory List all  -->
+	<select id="selectMyHistoryListAll" resultMap="myHistoryMap" parameterType="String">
+		<include refid="selectMyHistoryListSql"/>
+		and p.member_id = #{memberId}
+		order by p.reg_date desc
+	</select>
+	<!-- 거래내역 모집중 myHistory -->
+	<select id="selectMyHistoryListRecruit" resultMap="myHistoryMap" parameterType="String">
+		<include refid="selectMyHistoryListSql"/>
+		and p.member_id = #{memberId}
+		and a.state = '1'
+		order by p.reg_date desc
+	</select>
+	<!-- 거래내역 모집완료(state:2,3,4,5,6) -->
+	<select id="selectMyHistoryListRecruitEnd" resultMap="myHistoryMap" parameterType="String">
+		<include refid="selectMyHistoryListSql"/>
+		and p.member_id = #{memberId}
+		and a.state in ('2','3','4','5','6')
+		order by p.reg_date desc
+	</select>
+	<!-- myHistory 매각작품 -->
+	<select id="selectMyHistoryDisposalInfoList" parameterType="String" resultType="myHistory">
+		select p.artwork_info_id as artworkInfoId, p.revenue, p.initiaCost, i.artwork_img as artworkImg, 
+		round(sell_price / ((ESTIMATED_PRICE_MAX + ESTIMATED_PRICE_min)/2) * 100 - 100,2) as yield,
+		a.title, w.writer_name as writerName, a.recruit_end_date as recruitEndDate, 
+		to_char(a.sell_date,'yyyy-mm-dd') as sellDate from 
+		(select artwork_info_id, -sum(piece_no * piece_amt) as revenue, 
+		-sum(piece_no * 10660) as initiaCost from sj_purchase_info 
+		where member_id = #{memberId} 
+		and type = '3'
+		GROUP by artwork_info_id) p,
+		(select artwork_info_id, file_chan_name as artwork_img
+		from sj_artwork_info_img 
+		where (artwork_info_id, id) in (
+		select artwork_info_id, max(id) as id
+		from sj_artwork_info_img group by artwork_info_id)) i,
+		sj_artwork_info a,
+		sj_writer_info w
+		where p.artwork_info_id = i.artwork_info_id
+		and p.artwork_info_id = a.id
+		and a.writer_id = w.id
+	</select>
+	
+	<!-- 마이갤러리(myGallery) sql -->
+	<sql id="selectMyGallery">
+		select p.artwork_info_id, to_char(p.total_piece_no,'999,999,999') as total_piece_no, p.first_reg_date, a.title,
+		w.writer_name, i.artwork_img, a.state from 
+		(select artwork_info_id, sum(piece_no) as total_piece_no,
+		to_char(min(reg_date),'yyyy-mm-dd') as first_reg_date
+		from sj_purchase_info
+		where member_id = #{memberId}
+		GROUP by artwork_info_id) p, 
+		sj_artwork_info a,
+		sj_writer_info w,
+		(select artwork_info_id, file_chan_name as artwork_img
+		from sj_artwork_info_img 
+		where (artwork_info_id, id) in (
+		select artwork_info_id, max(id) as id
+		from sj_artwork_info_img group by artwork_info_id
+		)) i
+		where p.artwork_info_id = a.id
+		and a.writer_id = w.id
+		and i.artwork_info_id = p.artwork_info_id
+	</sql>
+	<resultMap type="myGallery" id="myGalleryMap">
+		<result column="artwork_info_id" property="artworkInfoId"/>
+		<result column="total_piece_no" property="totalPieceNo"/>
+		<result column="first_reg_date" property="firstRegDate"/>
+		<result column="writer_name" property="writerName"/>
+		<result column="artwork_img" property="artworkImg"/>
+	</resultMap>
+	
+	
+	<!-- 마이갤러리 all -->
+	<select id="selectMyGalleryAll" parameterType="String" resultMap="myGalleryMap">
+		<include refid="selectMyGallery"/>
+		order by p.first_reg_date desc
+	</select>
+	<!-- 마이갤러리 모집중 -->
+	<select id="selectMyGalleryRecruit" parameterType="String" resultMap="myGalleryMap">
+		<include refid="selectMyGallery"/>
+		and a.state = '1'
+		order by p.first_reg_date desc
+	</select>
+	<!-- 마이갤러리 모집완료 -->
+	<select id="selectMyGalleryRecruitEnd" parameterType="String" resultMap="myGalleryMap">
+		<include refid="selectMyGallery"/>
+		and a.state in ('2','3','4','5','6')
+		order by p.first_reg_date desc
+	</select>
+	<!-- 마이갤러리 매각완료 -->
+	<select id="selectMyGalleryDisposal" parameterType="String" resultMap="myGalleryMap">
+		<include refid="selectMyGallery"/>
+		and a.state = '7'
+		order by p.first_reg_date desc
+	</select>
+	
+	<!-- 카카오id update -->
+	<update id="updateKakaoId" parameterType="hashmap">
+		update sj_member set kakao_id = #{kakaoId} where id = #{memberId}
+	</update>
+	
+</mapper>

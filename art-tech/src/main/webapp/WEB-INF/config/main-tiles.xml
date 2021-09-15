@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+	<!-- 메인 템플릿 등록 -->
+	<definition name="mainTemplate" 
+			template="/WEB-INF/template/indexTemplate.jsp">
+		<put-attribute name="header" value="/WEB-INF/pages/main/header.jsp"/>
+		<put-attribute name="content" value="/WEB-INF/pages/main/content.jsp"/>
+		<put-attribute name="footer" value="/WEB-INF/pages/main/footer.jsp"/>
+	</definition>
+	
+	<!-- 아트코인 템플릿 -->
+	<definition name="artscanTemplate" 
+			template="/WEB-INF/template/artscanIndexTemplate.jsp">
+		<put-attribute name="artscanHeader" value="/WEB-INF/pages/artcoin/header.jsp"/>
+		<put-attribute name="artscanContent" value="/WEB-INF/pages/artcoin/content.jsp"/>
+		<put-attribute name="artscanFooter" value="/WEB-INF/pages/artcoin/footer.jsp"/>
+	</definition>
+	
+	<!-- index 페이지 등록 -->
+	<definition name="index" extends="mainTemplate"></definition>
+	<definition name="artscan/index" extends="artscanTemplate"></definition>
+
+</tiles-definitions>
