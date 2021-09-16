@@ -1,0 +1,13 @@
+server:
+  port: 18081
+  
+spring:
+  datasource:
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    url: jdbc:oracle:thin:@127.0.0.1:1521:xe
+    username: library
+    password: library
+    
+mybatis:
+  type-aliases-package: kr.ac.bank.dto
+  mapper-locations: classpath:mappers/*.xml
