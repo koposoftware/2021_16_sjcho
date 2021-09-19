@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="kr.ac.arttech.cobuying">
+	<!-- 작품정보 -->
+	<resultMap type="artworkInfo" id="artworkInfoMap">
+		<result column="writer_id" property="writerId"/>
+		<result column="size_width" property="sizeWidth"/>
+		<result column="size_height" property="sizeHeight"/>
+		<result column="production_year" property="productionYear"/>
+		<result column="artwork_content" property="artworkContent"/>
+		<result column="recruit_start_date" property="recruitStartDate"/>
+		<result column="recruit_end_date" property="recruitEndDate"/>
+		<result column="recruit_start_time" property="recruitStartTime"/>
+		<result column="recruit_end_time" property="recruitEndTime"/>
+		<result column="target_piece" property="targetPiece"/>
+		<result column="estimated_price_max" property="estimatedPriceMax"/>
+		<result column="estimated_price_min" property="estimatedPriceMin"/>
+		<result column="achie_piece" property="achiePiece"/>
+		<result column="sell_price" property="sellPrice"/>
+		<result column="total_transfer_tax" property="totalTransferTax"/>
+		<result column="sell_place" property="sellPlace"/>
+		<result column="writer_name" property="writerName"/>
+		<result column="award_history" property="awardHistory"/>
+		<result column="writer_info" property="writerInfo"/>
+		<result column="file_chan_name" property="fileChanName"/>
+		<result column="file_path" property="filePath"/>
+		<result column="orgn_file_name" property="orgnFileName"/>
+		<result column="state_name" property="stateName"/>
+		<result column="artwork_img" property="artworkImg"/>
+		<result column="target_price" property="targetPrice"/>
+		<result column="achie_price" property="achiePrice"/>
+		
+	</resultMap>
+	<sql id="artworkList">
+		select a.id, a.title, a.writer_id, a.material, a.size_width,
+		a.size_height,a.production_year, a.artwork_content, a.recruit_start_date,
+		a.recruit_end_date, a.recruit_start_time, a.recruit_end_time, 
+		to_char(a.target_piece * 10000,'999,999,999,999,999,999') as target_price,
+		to_char(a.achie_piece * 10000,'999,999,999,999,999,999') as achie_price,
+		a.target_piece, a.estimated_price_max, a.estimated_price_min,
+		a.achie_piece, to_char(a.sell_price,'999,999,999,999,999,999') as sell_price, a.total_transfer_tax, 
+		to_char(a.sell_date,'yyyy-mm-dd') as sellDate, a.state, 
+		a.sell_place ,to_char(a.reg_date, 'yyyy-mm-dd') as regDate , w.writer_name, w.career,
+		w.award_history, w.writer_info, w.file_chan_name, w.file_path, w.orgn_file_name,
+        i.artwork_img as artwork_img,
+		case 
+			when a.state = '0' then '모집 예정'
+			when a.state = '1' then '모집 중'
+			when a.state = '2' then '모집 완료'
+			when a.state = '3' then '매각 투표'
+			when a.state = '4' then '투표 종료'
+			when a.state = '5' then '매각 중'
+			when a.state = '6' then '수익 분배'
+			when a.state = '7' then '매각 완료'
+		end as state_name, 
+		trunc(a.sell_date - a.reg_date, 0) + 1 as retentionPeriod,
+		round(sell_price / ((ESTIMATED_PRICE_MAX + ESTIMATED_PRICE_min)/2) * 100 - 100,2) as yield
+		from sj_artwork_info a, sj_writer_info w,
+        (select artwork_info_id, file_chan_name as artwork_img
+	    from sj_artwork_info_img 
+	    where (artwork_info_id, id) in (
+	        select artwork_info_id, max(id) as id
+	        from sj_artwork_info_img group by artwork_info_id
+	    )) i
+		where a.writer_id = w.id 
+		and i.artwork_info_id = a.id
+	</sql>
+	
+	<sql id="artworkListPaging">
+		select *
+		from (
+		select rownum rn, pa.*
+		from (select a.id, a.title, a.writer_id, a.material, a.size_width,
+		a.size_height,a.production_year, a.artwork_content, a.recruit_start_date,
+		a.recruit_end_date, a.recruit_start_time, a.recruit_end_time, 
+		to_char(a.target_piece * 10000,'999,999,999,999,999,999') as target_price,
+		to_char(a.achie_piece * 10000,'999,999,999,999,999,999') as achie_price,
+		a.target_piece, a.estimated_price_max, a.estimated_price_min,
+		a.achie_piece, to_char(a.sell_price,'999,999,999,999,999,999') as sell_price, a.total_transfer_tax, 
+		to_char(a.sell_date,'yyyy-mm-dd') as sellDate, a.state, 
+		a.sell_place ,to_char(a.reg_date, 'yyyy-mm-dd') as regDate , w.writer_name, w.career,
+		w.award_history, w.writer_info, w.file_chan_name, w.file_path, w.orgn_file_name,
+        i.artwork_img as artwork_img,
+		case 
+			when a.state = '0' then '모집 예정'
+			when a.state = '1' then '모집 중'
+			when a.state = '2' then '모집 완료'
+			when a.state = '3' then '매각 투표'
+			when a.state = '4' then '투표 종료'
+			when a.state = '5' then '매각 중'
+			when a.state = '6' then '수익 분배'
+			when a.state = '7' then '매각 완료'
+		end as state_name, 
+		trunc(a.sell_date - a.reg_date, 0) + 1 as retentionPeriod,
+		round(sell_price / ((ESTIMATED_PRICE_MAX + ESTIMATED_PRICE_min)/2) * 100 - 100,2) as yield
+		from sj_artwork_info a, sj_writer_info w,
+        (select artwork_info_id, file_chan_name as artwork_img
+	    from sj_artwork_info_img 
+	    where (artwork_info_id, id) in (
+	        select artwork_info_id, max(id) as id
+	        from sj_artwork_info_img group by artwork_info_id
+	    )) i
+		where a.writer_id = w.id 
+		and i.artwork_info_id = a.id order by a.reg_date desc) pa
+		)
+		where rn between #{start} and #{end}
+	</sql>
+	
+	<!-- goods -->
+	<select id="selectArtworkInfoList" resultMap="artworkInfoMap">
+		<include refid="artworkList"/> 
+		order by a.reg_date desc
+	</select>
+	<!-- goods paging -->
+	<select id="selectArtworkInfoListPaging" resultMap="artworkInfoMap" parameterType="paging">
+		<include refid="artworkListPaging"/>
+	</select>
+	
+	<!-- goods 총 개수 출력 -->
+	<select id="selectArtworkCount" resultType="int" parameterType="paging"> 
+		select count(*) as cnt from sj_artwork_info
+	</select>
+	
+	<!-- 디테일 -->
+	<select id="selectArtworkInfo" resultMap="artworkInfoMap">
+		<include refid="artworkList"/> 
+		and a.id = #{id}
+	</select>
+	
+	<!-- 매각진행 현황 list -->
+	<select id="selectDisposalList" resultMap="artworkInfoMap">
+		<include refid="artworkList" />
+		and a.state in ('3', '4', '5', '6', '7')
+		order by a.reg_date desc
+	</select>
+	
+	<resultMap type="artworkInfoImg" id="artworkInfoImgMap">
+		<result column="artwork_Info_id" property="artworkInfoId" />
+		<result column="file_chan_name" property="fileChanName" />
+		<result column="file_path" property="filePath" />
+		<result column="orgn_file_name" property="orgnFileName" />
+		<result column="file_size" property="fileSize" />
+		<result column="reg_date" property="regDate" />
+	</resultMap>
+	
+	<select id="selectArtworkInfoImgList" resultMap="artworkInfoImgMap">
+		select * from sj_artwork_info_img where artwork_Info_id = #{id}
+	</select>
+	
+	<!-- 구매하기 -->
+	<resultMap type="purchaseInfo" id="purchaseInfoMap">
+		<result column="artwork_info_id" property="artworkInfoId"/>
+		<result column="member_id" property="memberId"/>
+		<result column="piece_no" property="pieceNo"/>
+		<result column="reg_date" property="regDate"/>
+		<result column="piece_amt" property="pieceAmt"/>
+		<result column="platform_usage_fee" property="platformUsageFee"/>
+		<result column="transfer_tax" property="transferTax"/>
+		<result column="total_piece_no" property="totalPieceNo"/>
+	</resultMap>
+	
+	<!-- 구매 -->
+	<insert id="insertPurchaseInfo" parameterType="purchaseInfo">
+		insert into sj_purchase_info(id, artwork_info_id, member_id,
+		piece_no, type, platform_usage_fee, vat)
+		values('purchase' || seq_sj_purchase_info.nextval, #{artworkInfoId}, #{memberId},
+		#{pieceNo}, '1', #{platformUsageFee}, #{vat})
+	</insert>
+	<update id="updateArtworkPieceInfo" parameterType="hashmap">
+		update sj_artwork_info set achie_piece = achie_piece + #{pieceNo}
+		where id = #{artworkInfoId}
+	</update>
+	
+	<!-- 조각 산 총 금액 -->
+	<select id="selectTotalPurchaseAmt" resultType="String">
+		select (select nvl(sum(piece_no * piece_amt + platform_usage_fee + vat),0) from sj_purchase_info where member_id = #{memberId} and type = '1') + 
+		(select nvl(sum(piece_no * (piece_amt + platform_usage_fee + vat)),0) from sj_purchase_info where member_id = #{memberId} and type = '2') +
+		(select nvl(sum(piece_no * piece_amt),0) from sj_purchase_info where member_id = #{memberId} and type = '3')
+		as total from dual
+	</select>
+	
+	<!-- 소유자 현황 list -->
+	<select id="selectOwnershipList" resultMap="artworkInfoMap">
+		<include refid="artworkList"/>
+		and a.state not in('0', '1')
+		order by a.reg_date desc
+	</select>
+	
+	<!-- 상태 변경 -->
+	<update id="updateStateByStartDate">
+		update sj_artwork_info set state = 1 where recruit_start_date = #{today} and state = 0
+	</update>
+	<update id="updateStateByEndDate">
+		update sj_artwork_info set state = 2 where recruit_end_date = #{today} and state = 1
+	</update>
+
+	
+	<!-- 한 그림의 소유자 리스트co-buying/ownershipDetail -->
+	<select id="selectTotalOwnerList" resultMap="purchaseInfoMap" parameterType="String">
+		select p.member_id, m.name, sum(piece_no) as total_piece_no 
+		from sj_purchase_info p, sj_member m 
+		where p.member_id = m.id 
+		and p.artwork_info_id = #{id}
+		and type in ('1','2')
+		group by p.member_id, m.name
+		order by total_piece_no desc
+	</select>
+	
+	<!-- wallet(publickey 가져오기) -->
+	<select id="selectWallet" resultType="String" parameterType="String">
+		select public_key from sj_member where id = #{memberId}	
+	</select>
+	
+	
+	
+</mapper>
