@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="kr.ac.kopo.manage.notice">
+	<resultMap type="notice" id="noticeMap">
+		<result column="manager_id" property="managerId"/>
+	</resultMap>
+	
+	<insert id="insertNotice" parameterType="notice">
+		insert into sj_notice(id, title, type, content) 
+		values('notice' || seq_sj_notice.nextval, #{title}, #{type}, #{content})
+	</insert>
+	
+	<!-- 공지 가져오기 -->
+	<sql id="selectNoticeSql">
+		select id, title, type, manager_id, content, to_char(reg_date,'yyyy-mm-dd') as regDate
+		from sj_notice
+	</sql>
+	
+	<select id="selectNoticeList" resultMap="noticeMap">
+		<include refid="selectNoticeSql" />
+	</select>
+	
+	<select id="selectNotice" resultMap="noticeMap" parameterType="String">
+		<include refid="selectNoticeSql" />
+		where id = #{id}
+	</select>
+</mapper>
