@@ -81,9 +81,9 @@ typora-copy-images-to: ./
 
 # 3. 프로젝트 제안서
 
-[![image-202110040441]: /하나아트_제안서.pdf
+![image-20211004044109719](image-20211004044109719.png)
 
-[발표자료](/project.pptx)<br>
+[발표자료](/하나아트_제안서.pdf)<br>
 
 
 
@@ -110,7 +110,9 @@ typora-copy-images-to: ./
 # 5. 프로젝트 결과
 
 ### 발표 ppt 
-   <img src="ppt.jpg"/>[발표자료](/project.pptx)<br>
+![image-20211004044602769](image-20211004044602769.png)
+
+[발표자료ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ](/project.pptx)<br>
 
 
 
