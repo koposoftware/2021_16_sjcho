@@ -124,7 +124,7 @@ typora-copy-images-to: ./
 
 
 
-<img src="img.PNG" alt="img" style="zoom: 67%;" /> 
+![img](img-1633289558744.PNG) 
 
 | 이름            | 조세진                                                       |
 | --------------- | ------------------------------------------------------------ |
@@ -150,5 +150,4 @@ typora-copy-images-to: ./
  theme을 변경하여 좀더 이쁜 홈페이지를 만든다.
    
    <img src="homepage.JPG"/><br>
-   
 
