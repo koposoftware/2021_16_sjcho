@@ -47,6 +47,7 @@ public class IndexController {
 		mav.addObject("noticeList", noticeService.getNoticeList());
 		
 		//협업필터링(작품 추천)
+		
 		if(memberId != "" || memberId != null) {
 			List<ArtworkInfoVO> recommendArtworkInfoList = cobuyingService.getRecommendArtworkInfoList(memberId);
 			if(recommendArtworkInfoList != null) {

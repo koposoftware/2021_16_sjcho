@@ -1,3 +1,4 @@
+
 .align-right {
 	text-align: right;
 }
@@ -34,5 +35,8 @@
 }
 .address-title-container p {
 	font-weight: bold;
-	font-size: 15px;
+	font-size: 20px;
+}
+.mywalletTranTd {
+	font-size: 18px;
 }

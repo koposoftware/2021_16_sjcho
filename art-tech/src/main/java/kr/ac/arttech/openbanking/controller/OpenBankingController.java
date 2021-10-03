@@ -9,11 +9,13 @@ import org.json.JSONObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 
@@ -22,6 +24,7 @@ import com.google.gson.JsonObject;
 import kr.ac.arttech.member.vo.MemberVO;
 import kr.ac.arttech.openbanking.service.OpenBankingService;
 import kr.ac.arttech.openbanking.vo.AccountInfoVO;
+import kr.ac.arttech.openbanking.vo.AuthenticationResponse;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -34,6 +37,7 @@ public class OpenBankingController {
 	//계좌조회(리스트)
 	@GetMapping("/myAccountList")
 	public String myAccountListGet(HttpServletRequest request, Model model) {
+		
 		HttpSession session = request.getSession();
 		String memberId = (String) session.getAttribute("memberId");
 		boolean result = service.checkServiceAgree(memberId);
@@ -43,6 +47,7 @@ public class OpenBankingController {
 		if(result) { //동의했으면
 			url = "openBanking/myAccountList";
 			List<AccountInfoVO> accountInfoList = service.getAccountInfoList(memberId);
+			//List<AccountInfoVO> accountInfoList = service.getAccountInfoList(memberId);
 			model.addAttribute("accountInfoList", accountInfoList);
 		}
 		return url;
@@ -79,6 +84,10 @@ public class OpenBankingController {
 		return "openBanking/myAccountDetail";
 	}
 	
-	
+	//회사 토큰 가져오기
+	//@Scheduled(cron="0 0 9 * * * ")
+	public void openBankingToken() {
+		service.getOpenBankingToken();
+	}
 	
 }

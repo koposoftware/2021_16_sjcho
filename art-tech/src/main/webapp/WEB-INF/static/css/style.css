@@ -1926,7 +1926,7 @@ h3 {
 .counter_area .single_counter h3 {
   color: black;
   font-weight: 500;
-  font-size: 46px;
+  font-size: 30px;
   margin-bottom: 5px;
 }
 
@@ -5023,6 +5023,14 @@ span.ui-slider-handle.ui-corner-all.ui-state-default:focus {
 /* line 4, ../../Arafath/CL/Cl November/223. Transportation/HTML/scss/_bradcam.scss */
 .bradcam_bg_2 {
   background-image: url(../img/banner/bradcam2.png);
+}
+
+.bradcam_bg_3 {
+  background-image: url(../img/banner/accountBanner.PNG);
+}
+
+.bradcam_bg_4 {
+  background-image: url(../img/banner/mypageBanner.png);
 }
 
 /* line 7, ../../Arafath/CL/Cl November/223. Transportation/HTML/scss/_bradcam.scss */

@@ -160,7 +160,7 @@
 		    			<div class="div_right">
 							<div class="disposal_revenue">
 								<p class="title">수익률</p>
-								<p class="content">${disposal.yield }%</p>
+								<p class="content revenueContent"><img src="https://ouch-cdn2.icons8.com/fsDEp5XJA9RL2xGRgAdoUTURJJ03N6J33Yhl81VgI-4/rs:fit:784:1703/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9zdmcvMTU5/L2M5OGIxMWM3LWEy/YTQtNGU0ZC1iOTk2/LWE4OGFlNmY4ZDky/My5zdmc.png" width="15px" height="25px">&nbsp; ${disposal.yield }%</p>
 							</div>
 							<div class="disposal_revenue">
 								<p class="title">보유기간</p>

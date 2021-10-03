@@ -74,6 +74,11 @@ public class MemberDAOImpl implements MemberDAO {
 	public List<MyHistoryVO> selectMyHistoryDisposalInfoList(String memberId) {
 		return sqlSession.selectList("kr.ac.arttech.member.selectMyHistoryDisposalInfoList", memberId);
 	}
+	//my history 내가 산 조각 개수
+	@Override
+	public List<MyHistoryVO> selectMyHistoryBuyPieceNo(String memberId) {
+		return sqlSession.selectList("kr.ac.arttech.member.selectMyHistoryBuyPieceNo", memberId);
+	}
 	
 	//myGallery all
 	@Override
@@ -95,6 +100,7 @@ public class MemberDAOImpl implements MemberDAO {
 	public List<MyGalleryVO> selectMyGalleryDisposal(String memberId) {
 		return sqlSession.selectList("kr.ac.arttech.member.selectMyGalleryDisposal",memberId);
 	}
+	
 	
 	
 	//wallet update(지갑 생성 클릭)

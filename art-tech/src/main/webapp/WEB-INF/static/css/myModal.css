@@ -168,12 +168,14 @@
 	font-size: 12px;
 }
 .myPage_container .myInfoDetail .addr_container p {
-	margin-bottom: 5px;
+	margin-bottom: 15px;
+	font-size: 20px;
 }
 .myPage_container .myInfoDetail .addr_container .dddr_title {
 	font-weight: bold;
-	font-size: 15px;
+	font-size: 25px;
 	padding-bottom: 10px;
+	margin-top: 10px;
 }
 
 

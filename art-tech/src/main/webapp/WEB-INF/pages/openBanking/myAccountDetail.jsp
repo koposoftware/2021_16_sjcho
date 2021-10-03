@@ -93,6 +93,21 @@
 	</script>
 </head>
 <body>
+	<!-- bradcam_area  -->
+    <div class="bradcam_area bradcam_bg_3">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="bradcam_text text-center">
+                        <p>계좌조회</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--/ bradcam_area  -->
+
+
 	<div class="qna-write-container">
 		<h4>계좌조회</h4>
 		<br>	

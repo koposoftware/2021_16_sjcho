@@ -29,6 +29,8 @@ public class MypageController {
 		session.removeAttribute("resultPurchase");
 		
 		String memberId = (String) session.getAttribute("memberId");
+		
+		model.addAttribute("myHistoryBuyPieceNo", service.getMyHistoryBuyPieceNo(memberId));
 		model.addAttribute("myHistoryListAll", service.getMyHistoryListAll(memberId));
 		model.addAttribute("myHistoryDisposalInfoList", service.getMyHistoryDisposalInfoList(memberId));
 		model.addAttribute("resultPurchase", resultPurchase);

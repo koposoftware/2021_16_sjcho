@@ -108,4 +108,31 @@
 		where a.member_id = m.id
 		order by m.id
 	</select>
+	
+	<!-- 오픈뱅킹 동의 -->
+	<update id="updateOpenbankingAgree" parameterType="String">
+		update sj_member set privacy_agree_yn = 'Y' where id = #{memberId}
+	</update>
+	
+	<!-- 토큰 db에 저장 -->
+	<update id="updateOpenbankingToken" parameterType="String">
+		update sj_member set token = #{token} where id = #{memberId}
+	</update>
+	
+	<!-- 회사토큰 db에 저장 -->
+	<insert id="insertOpenBankingToken" parameterType="String">
+		insert into sj_hanaart_info(id, token) values('hana'||seq_sj_hanaart_info.nextval, #{token})
+	</insert>
+	<!-- 회사토큰 가져오기 -->
+	<select id="selectOpenBankingToken" resultType="String">
+		select token from (select token from sj_hanaart_info order by reg_date desc) where rownum = 1
+	</select>
+	<!-- 핀테크이용번호 update -->
+	<update id="updateFintechNo" parameterType="member">
+		update sj_member set fintech_no = #{fintechNo} where id = #{id}
+	</update>
+	<!-- 핀테크 이용번호 가져오기 -->
+	<select id="selectFintechNo" parameterType="String" resultType="String">
+		select fintech_no from sj_member where id = #{memberId}
+	</select>
 </mapper>

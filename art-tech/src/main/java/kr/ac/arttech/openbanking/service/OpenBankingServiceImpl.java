@@ -6,11 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.json.JSONObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.JsonObject;
@@ -20,6 +23,7 @@ import kr.ac.arttech.member.vo.MemberVO;
 import kr.ac.arttech.openbanking.dao.OpenBankingDAO;
 import kr.ac.arttech.openbanking.vo.AccountInfoVO;
 import kr.ac.arttech.openbanking.vo.AccountTransferInfoVO;
+import kr.ac.arttech.openbanking.vo.AuthenticationResponse;
 import kr.ac.arttech.openbanking.vo.AutoTranAccountVO;
 import kr.ac.arttech.openbanking.vo.AutoTranInfoSMSVO;
 import kr.ac.arttech.openbanking.vo.ManageAccountInfoVO;
@@ -93,7 +97,7 @@ public class OpenBankingServiceImpl implements OpenBankingService {
 		//토큰 가져오기
 		String token = dao.selectToken(memberId);
 		
-		//토큰으로 은행 api로 계좌리스트 가져오기
+		//토큰과 핀테크 이용번호로 은행 api로 계좌리스트 가져오기
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		JsonObject parameters = new	JsonObject();
@@ -102,20 +106,22 @@ public class OpenBankingServiceImpl implements OpenBankingService {
 		
 		String url = "http://localhost:18081/accountList";
 		RestTemplate restTemplate = new RestTemplate();
-		Map<String, Object> data = (Map<String, Object>) restTemplate.postForObject(url,entity, Object.class);
+		Map<String, Object> data = (Map<String, Object>) restTemplate.postForObject(url, entity, Object.class);
 		
 		accountInfo = (List<AccountInfoVO>) data.get("data");
 		
 		return accountInfo;
 	}
 	
+	
 	//은행api에서 해당 계좌 정보 가져오기(디테일)
 	@Override
 	public List<AccountInfoVO> getAccountInfo(String memberId, AccountInfoVO accountInfo) {
 		List<AccountInfoVO> result = null;
 		
+		
 		//토큰 가져오기
-		String token = dao.selectToken(memberId);	
+		String token = dao.selectToken(memberId);
 		
 		//토큰으로 은행 api에서 특정 계좌 정보 가져오기
 		HttpHeaders headers = new HttpHeaders();
@@ -124,6 +130,7 @@ public class OpenBankingServiceImpl implements OpenBankingService {
 		parameters.addProperty("token", token);
 		parameters.addProperty("accountNumber", accountInfo.getAccountNumber());
 		parameters.addProperty("bankCode", accountInfo.getBankCode());
+		
 		
 		HttpEntity<Object> entity = new HttpEntity<Object>(parameters.toString(), headers);
 		
@@ -141,9 +148,10 @@ public class OpenBankingServiceImpl implements OpenBankingService {
 	public List<AccountTransferInfoVO> getTranInfoList(String memberId, 
 			AccountTransferInfoVO tranInfo) {
 		List<AccountTransferInfoVO> tranInfoList = null;
+		
 		//토큰 가져오기
-		String token = dao.selectToken(memberId);	
-		tranInfo.setToken(token);
+		String token = dao.selectToken(memberId);
+		
 		
 		//토큰으로 은행 api에서 특정 계좌의 거래내역 가져오기
 		HttpHeaders headers = new HttpHeaders();
@@ -168,6 +176,7 @@ public class OpenBankingServiceImpl implements OpenBankingService {
 		
 		return tranInfoList;
 	}
+	
 	
 	//자동예치금 설정한 계좌
 	@Override
@@ -234,16 +243,15 @@ public class OpenBankingServiceImpl implements OpenBankingService {
 	@Override
 	public String getDeposit(String memberId) {
 		String result = "";
-		//토큰 가져오기
-		String token = dao.selectToken(memberId);	
 		
+		//토큰 가져오기
+		String token = dao.selectToken(memberId);
 		
 		//토큰으로 은행 api에서 예치금 총 금액 가져오기
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		JsonObject parameters = new	JsonObject();
 		parameters.addProperty("token", token);
-
 		
 		HttpEntity<Object> entity = new HttpEntity<Object>(parameters.toString(), headers);
 		
@@ -262,6 +270,7 @@ public class OpenBankingServiceImpl implements OpenBankingService {
 		
 		return result;
 	}
+	
 	
 	//자동으로 예치금 충전
 	@Override
@@ -403,4 +412,37 @@ public class OpenBankingServiceImpl implements OpenBankingService {
 		return result;
 	}
 	
+	
+	//폰인증 결과 전송 받고 핀테크 이용번호 저장
+	@Override
+	public String checkAuthResult(String id, String memberId) {
+		//id값 저장(이게 핀테크 이용번호)
+		MemberVO member = new MemberVO();
+		member.setFintechNo(id);
+		member.setId(memberId);
+		dao.updateFintechNo(member);
+		
+		//오픈뱅킹 동의
+		System.out.println("오픈뱅킹 동의 memberId : " + memberId);
+		dao.updateOpenbankingAgree(memberId);
+		
+		return id;
+	}
+	
+	//회사토큰 발급
+	@Override
+	public String getOpenBankingToken() {
+		
+		//토큰 요청 보내기
+		String url = "http://localhost:18081/newToken";
+		RestTemplate restTemplate = new RestTemplate();
+		Map<String, String> data = (Map<String, String>) restTemplate.postForObject(url,null, Object.class);
+		
+		String token = data.get("data");
+		
+		//db에 저장
+		dao.insertOpenBankingToken(token);
+		
+		return token;
+	}
 }

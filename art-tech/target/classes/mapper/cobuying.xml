@@ -134,6 +134,7 @@
 	<select id="selectDisposalList" resultMap="artworkInfoMap">
 		<include refid="artworkList" />
 		and a.state in ('3', '4', '5', '6', '7')
+		order by a.reg_date desc
 	</select>
 	
 	<resultMap type="artworkInfoImg" id="artworkInfoImgMap">
@@ -185,6 +186,7 @@
 	<select id="selectOwnershipList" resultMap="artworkInfoMap">
 		<include refid="artworkList"/>
 		and a.state not in('0', '1')
+		order by a.reg_date desc
 	</select>
 	
 	<!-- 상태 변경 -->

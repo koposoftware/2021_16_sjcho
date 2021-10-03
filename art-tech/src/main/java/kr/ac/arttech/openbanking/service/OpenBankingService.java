@@ -36,4 +36,9 @@ public interface OpenBankingService {
 	//계좌이체
 	public boolean addTranInfo(AccountTransferInfoVO tranInfo);
 	
+	//폰인증 결과 전송 받고 토큰 생성 요청 보내기
+	public String checkAuthResult(String id, String memberId);
+	//회사토큰 발급
+	public String getOpenBankingToken();
+	
 }

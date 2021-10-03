@@ -76,7 +76,7 @@
            		"showDuration": "300",
            	    "hideDuration": "1000",
            		"timeOut": "7000",
-           		"onclick": function (){ location.href ="${ pageContext.request.contextPath }/" },
+           		"onclick": function (){ location.href ="${ pageContext.request.contextPath }/co-buying/goods" },
            		"hideMethod": "fadeOut"
             }
 			toastr.info(text,'[하나Art] 알림');

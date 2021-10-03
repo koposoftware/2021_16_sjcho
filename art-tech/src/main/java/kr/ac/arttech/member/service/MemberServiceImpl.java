@@ -129,6 +129,12 @@ public class MemberServiceImpl implements MemberService{
 		return myGalleryList;
 	}
 	
+	//my history 내가 산 조각 개수
+	@Override
+	public List<MyHistoryVO> getMyHistoryBuyPieceNo(String memberId) {
+		return dao.selectMyHistoryBuyPieceNo(memberId);
+	}
+	
 	//지갑 생성
 	@Override
 	public String createWalletInfo(String id) {

@@ -13,9 +13,12 @@ import kr.ac.arttech.openbanking.vo.ManageAccountInfoVO;
 public interface OpenBankingDAO {
 	public String checkServiceAgree(String memberId); //오픈뱅킹 동의했는지 확인
 	public int updateServiceAgreeState(MemberVO member); //오픈뱅킹 동의(토큰넣기, Y로 바꾸기)
+	public int updateOpenbankingAgree(String memberId); //오픈뱅킹 동의(Y로 바꾸기)
+	
 	
 	public MemberVO selectMemberNameJumin(String memberId); //오픈뱅킹 토큰 생성을 위한 정보 가져오기 
 	public String selectToken(String memberId) ; //토큰 가져오기 
+	public int updateOpenbankingToken(String memberId);//토큰 저장
 	
 	public List<AutoTranAccountVO> selectAutoAccountList(String memberId);  //자동예치금 설정한 계좌 리스트(한명)
 	public List<AccountInfoVO> selectNonAutoAccountList(Map<String, String> map); //설정 안한 계좌 리스트(한명)
@@ -31,6 +34,10 @@ public interface OpenBankingDAO {
 	public ManageAccountInfoVO selectManageAccountInfo(); //회사 계좌 정보
 	
 	public List<AutoTranInfoSMSVO> selectAutoTranInfoSMS();//자동이체 신청한 계좌정보와 사람 정보 가져와서 문자보내기
+	public int insertOpenBankingToken(String token); //회사토큰 db에 저장
+	public String selectOpenBankingToken(); //회사토큰 가져오기
+	public int updateFintechNo(MemberVO member);//핀테크 이용번호 추가
+	public String selectFintechNo(String memberId); //핀테크 이용번호 가져오기
 	
 	
 	

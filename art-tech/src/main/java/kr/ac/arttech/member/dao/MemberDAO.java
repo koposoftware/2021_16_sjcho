@@ -21,6 +21,7 @@ public interface MemberDAO {
 	public List<MyHistoryVO> selectMyHistoryListRecruit(String memberId) ; //myHistory 모집중
 	public List<MyHistoryVO> selectMyHistoryListRecruitEnd(String memberId) ; //myHistory 모집완료(state:2,3,4,5,6)
 	public List<MyHistoryVO> selectMyHistoryDisposalInfoList(String memberId); //myHistory 매각완료 정보 
+	public List<MyHistoryVO> selectMyHistoryBuyPieceNo(String memberId); //my history 내가 산 조각 개수
 	
 	public List<MyGalleryVO> selectMyGalleryAll(String memberId); //myGallery all
 	public List<MyGalleryVO> selectMyGalleryRecruit(String memberId); //myGallery 모집중

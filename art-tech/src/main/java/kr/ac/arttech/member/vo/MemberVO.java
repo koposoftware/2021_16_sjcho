@@ -29,7 +29,7 @@ public class MemberVO  {
 	private String memDeniedYn; 
 	private String privacyAgreeYn; //오픈뱅킹 동의여부
 	private String token; //오픈뱅킹 토큰
-	private String fintechUseNo;
+	private String fintechNo;
 	
 	
 }

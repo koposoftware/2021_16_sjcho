@@ -171,15 +171,24 @@
 						</div>
 					<div class="addr_container">
 						<p class="dddr_title">주소</p>
-						<p>우편번호</p>
-						<p><span><input class="post_input" type="text" id="sample4_postcode" readonly value="${member.zipcode }"></span><span class="find_address_span"><a onclick="sample4_execDaumPostcode()">주소 변경</a></span></p>
-						<p>도로명 주소</p>
-						<p><input type="text" id="sample4_roadAddress" value="${member.addr1Load }" readonly></p>
-						<p>지번 주소</p>
-						<p><input type="text" id="sample4_jibunAddress" value="${member.addr1Jibun }" readonly></p>
-						<p><span id="guide" style="color:#999;display:none"></span></p>
-						<p>상세 주소</p>
-						<p><input type="text" id="sample4_detailAddress" value="${member.addr2}"></p>
+						<table class="table myPage-addr-table">
+							<tr>
+								<th>우편번호</th>
+								<td><span><input class="post_input" type="text" id="sample4_postcode" readonly value="${member.zipcode }"></span><span class="find_address_span"><a onclick="sample4_execDaumPostcode()">주소 변경</a></span></td>
+							</tr>
+							<tr>
+								<th>도로명 주소</th>
+								<td><input type="text" id="sample4_roadAddress" value="${member.addr1Load }" readonly></td>
+							</tr>
+							<tr>
+								<th>지번 주소</th>
+								<td><input type="text" id="sample4_jibunAddress" value="${member.addr1Jibun }" readonly></td>
+							</tr>
+							<tr>
+								<th>상세 주소</th>
+								<td><input type="text" id="sample4_detailAddress" value="${member.addr2}"></td>
+							</tr>
+						</table>
 					</div>
 				</div>
 				<hr class="myInfo-hr">
@@ -188,8 +197,8 @@
 					<c:choose>
 						<c:when test="${not empty member.publicKey }">
 							<div>
-								<p class="copy-mywallet"> 복사하기 </p>
-								<p class="kakao_p mypage-publicKey" >${member.publicKey }</p>
+								<p class="publickeyAddress_p" >address 복사하기 </p>
+								<p class="mypage-publicKey" >${member.publicKey }</p>
 								<input type="hidden" value="${member.publicKey }" id="myWallet">
 							</div>
 						</c:when>
@@ -202,13 +211,13 @@
 					
 				</div>
 				
-				<div class="sns_container">
+				<div class="sns_container2">
 					<p class="my_sns_title">연동된 SNS 계정</p>
 					<c:if test="${empty member.kakaoId}">
 						<p class="kakao_p"><a onclick="kakaoLogin()">카카오 계정 연동하기</a></p>
 					</c:if>
 					<c:if test="${not empty member.kakaoId}">
-						<p class="kakao_p">카카오 계정</p>
+						<p class="kakao_p"><img alt="" width="50px;" height="50px;" src="https://i0.wp.com/forhappywomen.com/wp-content/uploads/2018/11/%EC%82%B0%EB%B6%80%EC%9D%B8%EA%B3%BC-%ED%8F%AC%ED%95%B4%ED%94%BC%EC%9A%B0%EB%A8%BC-%EB%AC%B8%EC%9D%98-%EC%B9%B4%EC%B9%B4%EC%98%A4%ED%94%8C%EB%9F%AC%EC%8A%A4%EC%B9%9C%EA%B5%AC-%EB%B2%84%ED%8A%BC.png?resize=586%2C586&ssl=1"></p>
 					</c:if>
 				</div>
 				

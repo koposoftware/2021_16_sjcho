@@ -19,6 +19,7 @@ public interface MemberService {
 	public List<MyHistoryVO> getMyHistoryListAll(String memberId); //my history all
 	public List<MyHistoryVO> getMyHistoryDisposalInfoList(String memberId);//my history disposal
 	public List<MyHistoryVO> getMyHistoryListOption(Map<String, String> map); //myhistory 옵션 선택했을 때 list 
+	public List<MyHistoryVO> getMyHistoryBuyPieceNo(String memberId); //my history 내가 산 조각 개수
 	
 	public List<MyGalleryVO> getMyGalleryList(Map<String, String> map); //myGallery list
 	

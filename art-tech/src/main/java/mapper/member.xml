@@ -29,7 +29,6 @@
 		<result column="receive_kakao_yn" property="receiveKakaoYn"/>
 		<result column="mem_denied_yn" property="memDeniedYn"/>
 		<result column="privacy_agree_yn" property="privacyAgreeYn"/>
-		<result column="fintech_use_no" property="fintechUseNo"/>
 		<result column="private_Key" property="privateKey"/>
 		<result column="public_key" property="publicKey"/>
 	</resultMap>
@@ -48,8 +47,7 @@
 		select id, user_id , name, phone, email, birth, zipcode, 
 		addr1_load , addr1_jibun , addr2, gender, kakao_id , 
 		reg_date, withdrawal_date , receive_kakao_yn, public_key,
-		mem_denied_yn as memDeniedYn, privacy_agree_yn as privacyAgreeYn, 
-		fintech_use_no  as fintechUseNo
+		mem_denied_yn as memDeniedYn, privacy_agree_yn as privacyAgreeYn
 		from sj_member where id = #{id}
 	</select>
 	
@@ -120,6 +118,7 @@
 		and a.state in ('2','3','4','5','6')
 		order by p.reg_date desc
 	</select>
+	
 	<!-- myHistory 매각작품 -->
 	<select id="selectMyHistoryDisposalInfoList" parameterType="String" resultType="myHistory">
 		select p.artwork_info_id as artworkInfoId, p.revenue, p.initiaCost, i.artwork_img as artworkImg, 
@@ -141,14 +140,26 @@
 		where p.artwork_info_id = i.artwork_info_id
 		and p.artwork_info_id = a.id
 		and a.writer_id = w.id
+		order by a.sell_date desc
 	</select>
+	<!-- myhistory 내가 산 조각 수 -->
+	<select id="selectMyHistoryBuyPieceNo" parameterType="String" resultType="myHistory">
+		select a.id as artworkInfoId, sum(p.piece_no) as pieceNo from sj_purchase_info p, sj_artwork_info a 
+		where p.artwork_info_id = a.id 
+		and member_id = #{memberId}
+		and a.state = '7'
+		and p.type != '3'
+		group by a.id
+	</select>
+	
 	
 	<!-- 마이갤러리(myGallery) sql -->
 	<sql id="selectMyGallery">
 		select p.artwork_info_id, to_char(p.total_piece_no,'999,999,999') as total_piece_no, p.first_reg_date, a.title,
 		w.writer_name, i.artwork_img, a.state from 
 		(select artwork_info_id, sum(piece_no) as total_piece_no,
-		to_char(min(reg_date),'yyyy-mm-dd') as first_reg_date
+		to_char(min(reg_date),'yyyy-mm-dd') as first_reg_date,
+		min(reg_date) as min_order
 		from sj_purchase_info
 		where member_id = #{memberId}
 		GROUP by artwork_info_id) p, 
@@ -163,6 +174,7 @@
 		where p.artwork_info_id = a.id
 		and a.writer_id = w.id
 		and i.artwork_info_id = p.artwork_info_id
+		
 	</sql>
 	<resultMap type="myGallery" id="myGalleryMap">
 		<result column="artwork_info_id" property="artworkInfoId"/>
@@ -176,30 +188,32 @@
 	<!-- 마이갤러리 all -->
 	<select id="selectMyGalleryAll" parameterType="String" resultMap="myGalleryMap">
 		<include refid="selectMyGallery"/>
-		order by p.first_reg_date desc
+		order by p.min_order desc
 	</select>
 	<!-- 마이갤러리 모집중 -->
 	<select id="selectMyGalleryRecruit" parameterType="String" resultMap="myGalleryMap">
 		<include refid="selectMyGallery"/>
 		and a.state = '1'
-		order by p.first_reg_date desc
+		order by p.min_order desc
 	</select>
 	<!-- 마이갤러리 모집완료 -->
 	<select id="selectMyGalleryRecruitEnd" parameterType="String" resultMap="myGalleryMap">
 		<include refid="selectMyGallery"/>
 		and a.state in ('2','3','4','5','6')
-		order by p.first_reg_date desc
+		order by p.min_order desc
 	</select>
 	<!-- 마이갤러리 매각완료 -->
 	<select id="selectMyGalleryDisposal" parameterType="String" resultMap="myGalleryMap">
 		<include refid="selectMyGallery"/>
 		and a.state = '7'
-		order by p.first_reg_date desc
+		order by p.min_order desc
 	</select>
 	
 	<!-- 카카오id update -->
 	<update id="updateKakaoId" parameterType="hashmap">
 		update sj_member set kakao_id = #{kakaoId} where id = #{memberId}
 	</update>
+	
+	
 	
 </mapper>

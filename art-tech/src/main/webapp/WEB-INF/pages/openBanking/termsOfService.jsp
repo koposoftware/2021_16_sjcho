@@ -17,11 +17,37 @@
 	<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 	<script src="${pageContext.request.contextPath}/static/js/jquery-3.6.0.min.js"></script>
 	
+	<script type="text/javascript">
+		function phoneAuth() {
+			//핸드폰 인증 창 띄우기
+			var w = window.open("about:blank","_blank", "width=400,height=610");
+			w.location.href = "http://192.168.0.2:18081/OAuth";
+			/*
+			$.ajax({
+				type: "get",
+				url : "http://localhost:18081/phoneAuth",
+				method : 'get',
+				success : function(data) {
+					alert('여기')
+					
+			        
+				},
+				error: function (request, status, error){
+					var msg = "ERROR : " + request.status + "<br>"
+					msg += + "내용 : " + request.responseText + "<br>" + error;
+					console.log(msg);
+					
+				}
+
+			})
+			*/
+		}
+	
+	</script>
 </head>
 <body>
 <div class="termsOfService_container">
 	<div class="container" align="center">
-		<form method="post" action="${pageContext.request.contextPath}/openBanking/myAccountList">
 		<table>
 			  <tr>
 				   <td>
@@ -163,12 +189,11 @@
 			  </tr>
 			  <tr>
 				   <td align="center" valign="top">
-					    <input type="submit" value="동의">
+					    <button type="button" onclick="phoneAuth()">동의</button>
 					    <button type="button" onclick="location.href='${pageContext.request.contextPath}/index'">메인으로 가기</button> 
 				   </td>
 			  </tr>
 		 </table>
-		 </form>
 	</div>
 </div>
 </body>

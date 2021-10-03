@@ -449,6 +449,7 @@
 				</tr>
 				</thead>
 				<tbody id="myHistoryTbodyTwo">
+					
 					<c:forEach items="${myHistoryListAll }" var="myHistory">
 						<tr> 
 							<td>${myHistory.regDate }</td>
