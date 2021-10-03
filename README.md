@@ -118,7 +118,7 @@ typora-copy-images-to: ./
 
 ### 시연 동영상 
 
-   <iframe id="ytplayer" type="text/html" width="640" height="360" src="https://youtu.be/qSwVssVAg8I" frameborder="0"></iframe>
+<iframe width="640" height="400" src="https://www.youtube.com/embed/qSwVssVAg8I" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 
 
