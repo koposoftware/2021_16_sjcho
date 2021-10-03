@@ -143,8 +143,8 @@ public class CobuyingController {
 	
 	//모집중(1) -> 모집완료(2)
 	//현재 날짜 = 모집 종료 날짜 update
-	//@Scheduled(cron="0 0 14 * * * ")
 	//@Scheduled(cron="0/3 * * * * * ")
+	@Scheduled(cron="0 0 14 * * * ")
 	public void updateState() {
 		Map<String, Integer> map = service.modifyState();
 		int resultStart = map.get("start");

@@ -8,13 +8,26 @@ import org.rosuda.REngine.Rserve.RConnection;
 
 public class CollaborativeFilteringUtil {
 	
+	public static List<String> runCollaborativeFilteringModel() {
+		List<String> result = null;
+		
+		try {
+			RConnection conn = new RConnection();
+			conn.eval("source('C:/art-tech/rscript/collaborative-filtering-model.R')"); //스크립트 실행
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
 	public static List<String> getRecommendArtwork(String memberId) {
 		List<String> result = null;
 		
 		try {
 			RConnection conn = new RConnection();
 			System.out.println("member id : " + memberId);
-			conn.eval("source('C:/art-tech/rscript/collaborative-filtering-model.R')"); //스크립트 실행
+			conn.eval("source('C:/art-tech/rscript/collaborative-filtering-run.R')"); //스크립트 실행
 			//리스트 받아오기 (try - catch문 사용)
 			System.out.println("member id : " + memberId);
 			conn.eval("who <- as.numeric(which(pivot_data$MEMBER_ID=='"+ memberId +"'))");
@@ -36,4 +49,5 @@ public class CollaborativeFilteringUtil {
 		
 		return result;
 	}
+	
 }

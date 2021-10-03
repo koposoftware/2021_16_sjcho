@@ -1,3 +1,9 @@
+---
+typora-copy-images-to: ./
+---
+
+
+
 # 프로젝트 제목
 
 [프로젝트 홈페이지 - https://koposoftware.github.io/template/](https://koposoftware.github.io/template/)
@@ -12,7 +18,7 @@
 
    <img src="ppt.jpg"/>[발표자료](/project.pptx)<br>
    <iframe id="ytplayer" type="text/html" width="640" height="360" src="https://www.youtube.com/embed/6LxbdIjWP04" frameborder="0"></iframe>
- 
+
 
 # 3. 프로젝트 결과
 프로젝트 결과를 추가하세요. 발표자료. 시연동영상을 추가하세요.
@@ -45,10 +51,10 @@
  Source에서 원하는 branch와 directory 설정한다. 
  기본값은 master 에 root를 설정 
  Save 버튼 꼭 누른다.
- 
+
  * Theme Chooser
  theme을 변경하여 좀더 이쁜 홈페이지를 만든다.
    
    <img src="homepage.JPG"/><br>
    
- 
+
