@@ -115,7 +115,7 @@ typora-copy-images-to: ./
 ### 발표 ppt 
 ![image-20211004044602769](image-20211004044602769.png)
 
-[발표자료](/project.pptx)<br>
+[발표자료](/하나아트_미술품공동구매플랫폼_조세진_발표.pdf)<br>
 
 
 
