@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="kr.ac.kopo.manage.artworkInfo">
+	<insert id="insertArtworkInfo" parameterType="artworkInfo">
+		insert into sj_artwork_info(id, title, writer_id, material, 
+		size_width, size_height,production_year, artwork_content, recruit_start_date, 
+		recruit_end_date, recruit_start_time,recruit_end_time, target_piece, 
+		estimated_price_max, estimated_price_min ) 
+		
+		values(#{id}, #{title}, #{writerId}, #{material},
+		#{sizeWidth}, #{sizeHeight}, #{productionYear}, #{artworkContent}, #{recruitStartDate}, 
+		#{recruitEndDate}, #{recruitStartTime}, #{recruitEndTime}, #{targetPiece}, 
+		#{estimatedPriceMax}, #{estimatedPriceMin})
+	</insert>
+	
+	<insert id="insertArtworkInfoImg" parameterType="java.util.HashMap">
+		<foreach collection="paramMap" item="map" separator=" " open="INSERT ALL" close="SELECT * FROM DUAL">	
+			into sj_artwork_info_img (
+				id, artwork_info_id, file_chan_name, file_path, orgn_file_name, file_size) 
+			values(
+				#{map.id}, 
+				#{map.artworkInfoId} , 
+				#{map.fileChanName} , 
+				#{map.filePath} , 
+				#{map.orgnFileName} , 
+				#{map.fileSize}  
+			)
+		</foreach>
+	</insert>
+	
+	<select id="selectArtworkInfoImgId" resultType="int">
+		select seq_sj_artwork_info_img.nextval as id from dual
+	</select>
+	
+	<select id="selectArtworkInfoId" resultType="int">
+		select seq_sj_artwork_info.nextval as id from dual
+	</select>
+	
+	<resultMap type="artworkInfo" id="artworkInfoMap">
+		<result column="writer_id" property="writerId"/>
+		<result column="size_width" property="sizeWidth"/>
+		<result column="size_height" property="sizeHeight"/>
+		<result column="production_year" property="productionYear"/>
+		<result column="artwork_content" property="artworkContent"/>
+		<result column="recruit_start_date" property="recruitStartDate"/>
+		<result column="recruit_end_date" property="recruitEndDate"/>
+		<result column="recruit_start_time" property="recruitStartTime"/>
+		<result column="recruit_end_time" property="recruitEndTime"/>
+		<result column="target_piece" property="targetPiece"/>
+		<result column="estimated_price_max" property="estimatedPriceMax"/>
+		<result column="estimated_price_min" property="estimatedPriceMin"/>
+		<result column="achie_piece" property="achiePiece"/>
+		<result column="sell_price" property="sellPrice"/>
+		<result column="total_transfer_tax" property="totalTransferTax"/>
+		<result column="sell_date" property="sellDate"/>
+		<result column="sell_place" property="sellPlace"/>
+		<result column="writer_name" property="writerName"/>
+		<result column="award_history" property="awardHistory"/>
+		<result column="writer_info" property="writerInfo"/>
+		<result column="file_chan_name" property="fileChanName"/>
+		<result column="file_path" property="filePath"/>
+		<result column="orgn_file_name" property="orgnFileName"/>
+		<result column="state_name" property="stateName"/>
+		<result column="artwork_img" property="artworkImg"/>
+		
+	</resultMap>
+	
+	<sql id="artworkList">
+		select a.id, a.title, a.writer_id, a.material, a.size_width,
+		a.size_height,a.production_year, a.artwork_content, a.recruit_start_date,
+		a.recruit_end_date, a.recruit_start_time, a.recruit_end_time, 
+		to_char(a.target_piece * 10000,'999,999,999,999,999,999') as target_price,
+		to_char(a.achie_piece * 10000,'999,999,999,999,999,999') as achie_price,
+		a.target_piece, to_char(a.estimated_price_max,'999,999,999,999,999,999') as estimated_price_max, 
+		to_char(a.estimated_price_min,'999,999,999,999,999,999') as estimated_price_min,
+		a.achie_piece, a.sell_price, a.total_transfer_tax, a.sell_date, a.state, 
+		a.sell_place ,to_char(a.reg_date, 'yyyy-mm-dd') as regDate , w.writer_name, w.career,
+		w.award_history, w.writer_info, w.file_chan_name, w.file_path, w.orgn_file_name,
+        i.artwork_img as artwork_img,
+		case 
+			when a.state = '0' then '모집 예정'
+			when a.state = '1' then '모집 중'
+			when a.state = '2' then '모집 완료'
+			when a.state = '3' then '매각 투표'
+			when a.state = '4' then '투표 종료'
+			when a.state = '5' then '매각 중'
+			when a.state = '6' then '수익 분배'
+			when a.state = '7' then '매각 완료'
+		end as state_name
+		from sj_artwork_info a, sj_writer_info w,
+        (select artwork_info_id, file_chan_name as artwork_img
+	    from sj_artwork_info_img 
+	    where (artwork_info_id, id) in (
+	        select artwork_info_id, max(id) as id
+	        from sj_artwork_info_img group by artwork_info_id
+	    )) i
+		where a.writer_id = w.id 
+		and i.artwork_info_id = a.id
+	</sql>
+	
+	<select id="selectArtworkInfoList" resultMap="artworkInfoMap">
+		<include refid="artworkList"/> 
+		order by a.reg_date desc
+	</select>
+	<select id="selectArtworkInfo" resultMap="artworkInfoMap" parameterType="String">
+		<include refid="artworkList"/> 
+		and a.id = #{artworkInfoId}
+	</select>
+	
+	<insert id="insertArtworkAmt" parameterType="String">
+		insert into sj_artwork_amt (id, artwork_info_id, closing_price)
+		values('amt' || seq_sj_artwork_amt.nextval, #{id}, 10000)
+	</insert>
+	
+	<!-- 매각 투표할 유저 검색 -->
+	<select id="selectVoteMemberInfo" resultType="member" parameterType="String">
+		select m.id, m.email, m.phone from sj_member m , 
+		(select member_id from sj_purchase_info where artwork_info_id = #{artwortInfoId} group by member_id having sum(piece_no) > 0) t
+		where t.member_id = m.id
+	</select>
+	<!-- 매각진행 후 문자보낼 유저 -->
+	<select id="selectDisposalSMSMemberInfo" resultType="member" parameterType="String">
+		<![CDATA[
+		select m.id, m.email, m.phone from sj_member m , 
+		(select member_id from sj_purchase_info where artwork_info_id = #{artwortInfoId} and type='3' group by member_id having sum(piece_no) < 0) t
+		where t.member_id = m.id
+		]]>
+	</select>
+	
+	<!-- 투표중으로 상태 변경 -->
+	<update id="updateArtworkInfoStateVote" parameterType="String">
+		update sj_artwork_info set state = '3' where id = #{artwortInfoId}
+	</update>
+	<!-- 투표 시작할 때 투표 정보 insert -->
+	<insert id="insertVoteInfo" parameterType="vote">
+		insert into sj_disposal_vote(id, artwork_info_id, start_date, end_date)
+		values('vote' || seq_sj_disposal_vote.nextval, #{artworkInfoId}, #{startDate}, #{endDate}) 
+	</insert>
+	
+	<resultMap type="vote" id="voteMap">
+		<result column="artwork_info_id" property="artworkInfoId"/>
+		<result column="agree_no" property="agreeNo"/>
+		<result column="total_no" property="totalNo"/>
+		<result column="reg_date" property="regDate"/>
+		<result column="start_date" property="startDate"/>
+		<result column="end_date" property="endDate"/>
+	</resultMap>
+	
+	<!-- 투표 정보 가져오기 -->
+	<select id="selectVoteInfo" resultMap="voteMap" parameterType="String">
+		select * from (select * from sj_disposal_vote where artwork_info_id = #{artworkInfoId}
+		order by reg_date desc) where rownum = 1
+	</select>
+	
+	<!-- 투표중 -> 투표종료 -->
+	<update id="updateStateVote" parameterType="String">
+		update sj_artwork_info set state = '4' 
+		where id = 
+		(select artwork_info_id from sj_disposal_vote 
+		where end_date = #{today})
+		and state = '3'
+	</update>
+	
+	<!-- 디테일 페이지 상태 변경 -->
+	<update id="updateArtworkState" parameterType="vote">
+		update sj_artwork_info set state = #{state} where id = #{artworkInfoId}
+	</update>
+	
+	<!-- 매각금액, 매각처, 매각일 update  -->
+	<update id="updateSellInfo" parameterType="vote">
+		update sj_artwork_info set sell_price = #{sellPrice}, sell_place = #{sellPlace},
+		sell_date = sysdate
+		where id = #{artworkInfoId}
+	</update>
+	
+	<resultMap type="purchase" id="purchaseMap">
+		<result column="artwork_info_id" property="artworkInfoId"/>
+		<result column="member_id" property="memberId"/>
+		<result column="piece_no" property="pieceNo"/>
+		<result column="reg_date" property="regDate"/>
+		<result column="piece_amt" property="pieceAmt"/>
+		<result column="platform_usage_fee" property="platformUsageFee"/>
+		<result column="transfer_tax" property="transferTax"/>
+		<result column="total_piece_no" property="totalPieceNo"/>
+	</resultMap>
+	
+	<!-- 해당 미술품 조각을 몇개 샀는지 -->
+	<select id="selectPurchaseListByArtworkInfoId" resultMap="purchaseMap" parameterType="String">
+		select member_id, sum(piece_no) as total_piece_no from sj_purchase_info 
+		where artwork_info_id = #{artworkInfoId} group by member_id
+	</select>
+	
+	<select id="selectPurchaseInfoSeq" resultType="int">
+		select seq_sj_purchase_info.nextval from dual
+	</select>
+	
+	<!-- 수익분배  -->
+	<!-- sj_purchase_info 매각정보 insert  -->
+	<insert id="insertPurchaseInfoDisposal" parameterType="java.util.HashMap">
+		<foreach collection="paramMap" item="map" separator=" " open="INSERT ALL" close="SELECT * FROM DUAL">	
+			into sj_purchase_info (
+				id, artwork_info_id, member_id, piece_no, piece_amt, type) 
+			values(
+				#{map.id}, 
+				#{map.artworkInfoId} , 
+				#{map.memberId} , 
+				#{map.pieceNo} , 
+				#{map.pieceAmt} , 
+				#{map.type}  
+			)
+		</foreach>
+	</insert>
+	
+	<!-- 작품명 가져오기 -->
+	<select id="selectArtworkTitle" parameterType="String" resultType="String">
+		select title from sj_artwork_info where id = #{id}
+	</select>
+</mapper>

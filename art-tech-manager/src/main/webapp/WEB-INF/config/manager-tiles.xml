@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+	<definition name="manage/goods" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/co-buying/goods.jsp" />
+	</definition>
+	<definition name="manage/goodsRegister" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/co-buying/goodsRegister.jsp" />
+	</definition>
+	<definition name="manage/goodsDetail" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/co-buying/goodsDetail.jsp" />
+	</definition>
+	
+	<definition name="manage/writerRegister" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/writer/writerRegister.jsp" />
+	</definition>
+	<definition name="manage/writerList" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/writer/writerList.jsp" />
+	</definition>
+	<definition name="manage/writerDetail" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/writer/writerDetail.jsp" />
+	</definition>
+	
+	<definition name="manage/noticeList" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/notice/list.jsp" />
+	</definition>
+	<definition name="manage/noticeDetail" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/notice/detail.jsp" />
+	</definition>
+	<definition name="manage/noticeRegister" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/notice/register.jsp" />
+	</definition>
+	
+	<definition name="manage/statistics" extends="mainTemplate">
+		<put-attribute name="content" value="/WEB-INF/pages/statistics/log.jsp" />
+	</definition>
+</tiles-definitions>

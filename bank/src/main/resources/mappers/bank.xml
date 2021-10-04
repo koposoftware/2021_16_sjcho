@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.ac.bank.mapper.BankMapper">
+	
+	<resultMap type="accountInfo" id="accountInfoMap">
+		<result column="account_number" property="accountNumber"/>
+		<result column="account_type" property="accountType"/>
+		<result column="bank_code" property="bankCode"/>
+		<result column="reg_date" property="regDate"/>
+		<result column="bank_name" property="bankName"/>
+	</resultMap>
+	
+	<!-- 모든 계좌 list -->
+	<sql id="selectAccountInfoAll">
+		select account_number, to_char(balance, '999,999,999,999,999') as balance, account_type, a.bank_code, 
+	   (select bank_name from sj_bank where bank_code = a.bank_code) as bank_name,
+	   to_char(reg_date,'yyyy-mm-dd') as reg_date, account_type
+	   from sj_account_info a
+	</sql>
+	
+	<!-- 한명의 계좌 정보 list -->
+	<select id="selectAccountInfoList" resultMap="accountInfoMap" parameterType="member">
+	   <include refid="selectAccountInfoAll"/>
+	   <where>
+	   		account_state = 1 and name = #{name} and jumin_no = #{juminNo}
+	   </where>
+	   order by bank_name, reg_date desc
+	</select>
+	
+	<!-- 1개 계좌 정보  -->
+	<select id="selectAccountInfo" parameterType="hashmap" resultMap="accountInfoMap" >
+		<include refid="selectAccountInfoAll"/>
+		<where>
+			account_state = 1 
+			and name = #{name} 
+			and jumin_no = #{juminNo}
+			and account_number = #{accountNumber}
+			and bank_code = #{bankCode}
+		</where>
+	</select>
+	
+	<resultMap type="accountTransferInfo" id="accountTransferInfoMap">
+		<result column="account_number" property="accountNumber"/>
+		<result column="inout_type" property="inoutType"/>
+		<result column="bank_code" property="bankCode"/>
+		<result column="tran_date" property="tranDate"/>
+		<result column="tran_time" property="tranTime"/>
+		<result column="bank_name" property="bankName"/>
+		<result column="other_account_number" property="otherAccountNumber"/>
+		<result column="other_bank_code" property="otherBankCode"/>
+	</resultMap>
+	
+	<!-- 거래내역 가져오기 -->
+	<select id="selectTranInfoList" resultMap="accountTransferInfoMap" parameterType="accountTransferInfo">
+		select a.*, (select bank_name from sj_bank where bank_code = a.bank_code ) as bank_name,
+		(select bank_name from sj_bank where bank_code = a.other_bank_code) as otherBankName,
+		to_char(a.tran_amt, '999,999,999,999,999') as tranAmt 
+		from sj_account_transfer_info a
+		<where>
+			tran_date between #{startDate} and #{endDate}
+			and fintech_no = #{fintechNo}
+			<choose>
+				<when test='selectDepositYn == "Y"'>
+					and OTHER_ACCOUNT_NUMBER = '41291065266607'
+				</when>
+				<when test='selectDepositYn == "N"'>
+					and account_number = #{accountNumber}
+				</when>
+			</choose>
+			
+			<choose>
+				<when test='selectInOutType == "I" '>
+					and inout_type = 'I'    
+				</when>
+				<when test='selectInOutType == "O" '>
+					and inout_type = 'O'    
+				</when>
+			</choose>
+		</where>
+		
+		<choose>
+			<when test='orderBy == "desc"'>
+				order by tran_date desc, tran_time desc   
+			</when>
+			<when test='orderBy == "asc" '>
+				order by tran_date, tran_time    
+			</when>
+		</choose>
+	</select>
+	
+	<!-- 총 예치금 금액 -->
+	<select id="selectTotalDeposit" resultType="String" parameterType="String">
+		<![CDATA[
+			select 
+			nvl((select sum(tran_amt) from sj_account_transfer_info 
+			where other_account_number = '41291065266607' -- other이 회사
+			and other_bank_code = '081'
+			and fintech_no = #{fintechNo}
+			group by inout_type
+			having inout_type = 'O'),0) - 
+			nvl((select sum(tran_amt)  from sj_account_transfer_info 
+			where other_account_number = '41291065266607' -- other이 회사
+			and other_bank_code = '081'
+			and fintech_no = #{fintechNo}
+			group by inout_type
+			having inout_type = 'I'),0)
+			as total_deposit from dual
+		]]>
+	</select>
+	
+	<!-- 거래내역 시퀀스 가져오기 -->
+	<select id="selectAccountTranInfoSeq" resultType="int">
+		select seq_sj_account_transfer_info.nextval as seq from dual
+	</select>
+	
+	<select id="insertAccountTranInfo" parameterType="accountTransferInfo" resultType="int" statementType="CALLABLE">
+			select transfer_fun(
+			#{id,  jdbcType=VARCHAR},
+			#{inoutType, jdbcType=VARCHAR},
+			#{tranAmt,jdbcType=VARCHAR},
+			#{accountNumber,jdbcType=VARCHAR},
+			#{bankCode, jdbcType=VARCHAR},
+			#{otherAccountNumber, jdbcType=VARCHAR},
+			#{otherBankCode, jdbcType=VARCHAR},
+			#{token, jdbcType=VARCHAR},
+			#{juminNo, jdbcType=VARCHAR},
+			#{name, jdbcType=VARCHAR} ) as result from dual
+		
+	</select>
+	
+	<!-- 오픈뱅킹 테이블에 인증 확인상태로 update -->
+	<update id="updateAuthAgree" parameterType="String">
+		update sj_openBanking set auth_yn = 'Y' where phone = #{phone}
+	</update>
+	<!-- 오픈뱅킹 시퀀스값 가져오기 -->
+	<select id="selectOpenbankingSeq" parameterType="String" resultType="String">
+		select id from sj_openBanking where phone = #{phone}
+	</select>	
+	<!-- 오픈뱅킹 멤버 정보 가져오기 -->
+	<select id="getMemberInfo" parameterType="String" resultType="member">
+		select id, name, jumin_no as juminNo, phone from sj_openBanking where id = #{id}
+	</select>
+</mapper>

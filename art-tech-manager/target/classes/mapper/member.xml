@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="kr.ac.kopo.manage.member">
+	<resultMap type="member" id="memberMap">
+		<result column="user_id" property="userId"/>
+		<result column="easy_password" property="easyPassword"/>
+		<result column="jumin_no" property="juminNo"/>
+		<result column="addr1_load" property="addr1Load"/>
+		<result column="addr1_jibun" property="addr1Jibun"/>
+		<result column="kakao_id" property="kakaoId"/>
+		<result column="reg_date" property="regDate"/>
+		<result column="withdrawal_date" property="withdrawalDate"/>
+		<result column="receive_kakao_yn" property="receiveKakaoYn"/>
+		<result column="mem_denied_yn" property="memDeniedYn"/>
+		<result column="privacy_agree_yn" property="privacyAgreeYn"/>
+		<result column="fintech_use_no" property="fintechUseNo"/>
+		<result column="private_Key" property="privateKey"/>
+		<result column="public_key" property="publicKey"/>
+	</resultMap>
+	
+	<sql id="selectMemberInfoSql">
+		select id, user_id , name, phone, email, birth, zipcode, 
+		addr1_load , addr1_jibun , addr2, gender, kakao_id , 
+		reg_date, withdrawal_date , receive_kakao_yn, public_key,
+		mem_denied_yn as memDeniedYn, privacy_agree_yn as privacyAgreeYn, 
+		fintech_use_no  as fintechUseNo from sj_member 
+	</sql>
+	
+	<select id="selectMemberInfoList" parameterType="String" resultMap="memberMap">
+		<include refid="selectMemberInfoSql"></include>
+	</select>
+	
+	<select id="selectMemberName" parameterType="String" resultType="String">
+		select name from sj_member where id = #{id}
+	</select>
+	
+	<!-- 성별 수 -->
+	<select id="selectGenderNo" resultType="member">
+		select f.*, m.* from
+		(select count(*) as manNo from sj_member where gender='F') f, 
+		(select count(*) as womanNo from sj_member where gender='M') m
+	</select>
+	<!-- 공동구매 참여/미참여 -->
+	<select id="selectCobuyingParticipation" resultType="member">
+		select 
+		(select count(*) from sj_member s
+		where s.id in (select p.member_id from sj_purchase_info p GROUP by p.member_id)) as participation,  
+		(select count(*) from sj_member s
+		where s.id not in (select p.member_id from sj_purchase_info p GROUP by p.member_id)) as nonParticipation
+		from dual
+	</select>
+</mapper>
