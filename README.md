@@ -102,6 +102,9 @@ typora-copy-images-to: ./
 - PL/SQL을 사용하여 이체 함수 생성
 - log4j - 로그 데이터 관리
 - Spring MVC 기반 웹 애플리케이션 제작
+- chart.js 수익률, 로그데이터 그래프
+- 주소API 회원가입
+- Spring Tiles로 view 구성
 
 
 
@@ -112,7 +115,7 @@ typora-copy-images-to: ./
 ### 발표 ppt 
 ![image-20211004044602769](image-20211004044602769.png)
 
-[발표자료ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ](/project.pptx)<br>
+[발표자료](/project.pptx)<br>
 
 
 
