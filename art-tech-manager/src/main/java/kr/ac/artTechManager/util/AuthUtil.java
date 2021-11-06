@@ -23,14 +23,14 @@ public class AuthUtil {
 		//핸드폰 번호
 		//여기부터 끝까지 주석
 		
-		String api_key = "NCSYPTNBUIL12T6I";
-	    String api_secret = "MJBLDTP2MEQBH6UTOO4C8F5D1PIEO94Q";
+		String api_key = "I";
+	    String api_secret = "";
 	    Message coolsms = new Message(api_key, api_secret);
 
 	    // 4 params(to, from, type, text) are mandatory. must be filled
 	    HashMap<String, String> params = new HashMap<String, String>();
 	    params.put("to", phone); //받는 사람
-	    params.put("from", "01025235526"); //보내는 사람
+	    params.put("from", ""); //보내는 사람
 	    params.put("type", "LMS");
 	    
 	    switch (vote.getType()) {
@@ -107,8 +107,8 @@ public class AuthUtil {
 	
 	public static void authEmail(VoteVO vote, String email) {
 		
-		String mail_id = "whtpwls7777@gmail.com" ;
-		String mail_pw = "alvhwkddls124!";
+		String mail_id = "" ;
+		String mail_pw = "";
 		
 		
 		//SMTP 서버 정보 설정
